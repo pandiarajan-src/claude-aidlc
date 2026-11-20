@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The six stages · Claude Code AI-Native SDLC</title>
+<link rel="stylesheet" href="assets/aidlc-sim.css?v=211"><link rel="stylesheet" href="assets/platform-kit.css?v=1"><link rel="stylesheet" href="hub.css"><script defer src="hub.js"></script>
+</head>
+<body>
+<a class="course-skip" href="#main">Skip to lifecycle</a>
+<header class="sim-header"><div class="icon" aria-hidden="true">🧭</div><div><h1>The six stages of the AI-native SDLC</h1><p>Make the next decision easier by giving it clear evidence from the previous one.</p></div></header>
+<main class="course" id="main">
+<nav class="course-nav" aria-label="Course"><a href="./">Course home</a><a href="setup.html">Setup</a><a href="lifecycle.html" aria-current="page">Lifecycle</a><a href="practice.html">Simulators</a><a href="reference.html">Learning loop &amp; FAQ</a></nav>
+<article class="stage">
+<h2>Why faster coding isn't enough</h2>
+<p>Suppose a change takes one day to code and four days to clarify, review, and release. Cutting coding to an hour still leaves most of the wait. Generating more changes can even make the review queue longer. Traditional controls were built for good reasons: agreement on scope, evidence of quality, and accountability for releases. Keep those objectives; change when and how you get the evidence.</p>
+<p><strong>The core shift:</strong> Don't ask for an implementation and then try to infer what it does. Agree on the outcome first, give the agent the approved context and boundaries, and verify the result against evidence you can inspect. Use AI throughout the lifecycle, not only to type code. People still approve scope, trade-offs, risk, and release decisions.</p>
+<p><strong>Think of a shared kitchen.</strong> The order says what the customer wants, the recipe specifies how it should turn out, the cook makes it, a check confirms it matches the order, and service feedback improves the next recipe. Even if one person does all the work, these are different decisions. The same applies to a solo developer and six SDLC stages.</p>
+<p><strong>Follow the evidence:</strong> Approved <code>intent.md</code> → <code>spec.md</code> → implementation <code>plan.md</code> and diff → passing tests and findings → PR and release record → incident or feedback → new intent. If verification fails, fix the code or revisit Design; don't move forward on an unexplained failure. For a small fix these could be sections in one PR, not six documents.</p>
+</article>
+<article class="stage" id="plays">
+<h2>Plays are practices, not phases</h2>
+<p>A <strong>stage</strong> answers a lifecycle question. A <strong>play</strong> is a repeatable way to improve how you answer it, with a starting condition, steps, a control, and a measure. You can adopt a Test play before redesigning how you capture requirements.</p>
+<h3>A practical adoption map</h3>
+<p>The six numbered lessons below follow <a href="https://claude.com/resources/articles/the-ai-native-sdlc-playbook">Anthropic's playbook</a>. For a first rollout, use this simplified sequence by dependency rather than trying everything at once:</p>
+<ol>
+<li><strong>Start where the queue is:</strong> Capture intent in Git, document repo conventions in <code>CLAUDE.md</code>, teach a repeatable checklist through a skill, or give Claude a fast test command. Start with one change.</li>
+<li><strong>Build on the basics:</strong> Turn an accepted intent into a design. Start a scoped Plan Mode session from the spec and rules. With shared conventions and reliable checks, try worktrees, subagents, or continuous evals of agent configuration.</li>
+<li><strong>Strengthen the release path:</strong> Review PRs against agreed rules and test evidence. Practice deterministic hooks and require server-side checks. Rehearse rollback and verify permissions before considering agent-assisted CI/CD.</li>
+<li><strong>Close the loop:</strong> After you have a reviewed way to record intent and handle releases, let a trusted alert produce a draft follow-up for triage. Start with read-only diagnosis; keep human approval for changes.</li>
+</ol>
+<p>In this course you approve and hand off artifacts manually. In a mature system a trusted event can trigger the next check, but an event is not permission to deploy.</p>
+</article>
+<nav class="walk-nav" aria-label="Lifecycle stages"><a href="#plan">1 · Plan</a><a href="#design">2 · Design</a><a href="#build">3 · Build</a><a href="#test">4 · Test</a><a href="#deploy">5 · Deploy</a><a href="#maintain">6 · Maintain</a></nav>
+<article class="stage" id="plan">
+<span class="phase-tag">01 · Intent</span><h2>Plan: agree on the problem</h2>
+<p><strong>Why separate it:</strong> Drafting requirements is faster than discovering you solved the wrong problem. Capture the user's wording while it's fresh, and review it before judging solutions.</p>
+<p><strong>Play:</strong> Start from an idea, ticket, or incident. Ask Claude to identify the user, pain, outcome, exclusions, and open questions. Have the owner correct it and version the result as <code>intent.md</code>. Track time from request to accepted intent and how often implementations reopen scope.</p>
+<p><strong>Greenfield:</strong> A support operator wants to queue a synthetic notification once per request. Real email and persistent queues are out.</p>
+<p><strong>Brownfield:</strong> Finance wants one CSV for a small batch; existing clients must still get the same single-invoice CSV.</p>
+<details><summary>Try it: Make “faster exports” testable</summary><p>Expected: “An operator can submit a batch of up to 10 known unique invoice IDs and receive one CSV in request order. Existing single exports are unchanged.” Leave latency targets open until you have a baseline.</p></details>
+<p><strong>Handoff:</strong> Design reads the accepted intent, not the original chat. <a href="practice.html#g-plan">Greenfield lab</a> · <a href="practice.html#b-plan">Brownfield lab</a></p>
+</article>
+<article class="stage" id="design">
+<span class="phase-tag purple">02 · Spec</span><h2>Design: make behavior and trade-offs explicit</h2>
+<p><strong>Why separate it:</strong> You can compare contracts and failure behavior without paying to undo an implementation. The spec gives testers, developers, and the agent the same target.</p>
+<p><strong>Play:</strong> Supply the intent and relevant standards. Ask Claude for two alternatives and observable acceptance cases. Have a person choose the design and record trade-offs, risks, and non-goals in <code>spec.md</code>. Watch for requirements changed during review and design-driven rework.</p>
+<p><strong>Greenfield:</strong> Start with in-memory deduplication and a fake outbox rather than setting up a real queue. Document that restart resets state.</p>
+<p><strong>Brownfield:</strong> Add a flagged function instead of replacing the CSV interface. Reject a bad batch before returning any export.</p>
+<details><summary>Try it: Decide what a duplicate means</summary><p>Expected: A repeated notification request ID is a no-op; duplicate invoice IDs in one batch are an input error. Similar words can require different rules.</p></details>
+<p><strong>Handoff:</strong> Build reads the agreed behavior and constraints. <a href="practice.html#g-design">Greenfield lab</a> · <a href="practice.html#b-design">Brownfield lab</a></p>
+</article>
+<article class="stage" id="build">
+<span class="phase-tag amber">03 · Plan and diff</span><h2>Build: approve a small implementation and make it real</h2>
+<p><strong>Why separate it:</strong> The Plan stage defines <em>why</em>; Claude Code's Plan Mode during Build works out <em>how</em> and what to verify before editing. A small diff and explicit change boundaries reduce review effort.</p>
+<p><strong>Plays:</strong> Start in Plan Mode with <code>spec.md</code> and <code>CLAUDE.md</code>. Ask for file-level changes, risks, and a test command; approve a small slice and record <code>plan.md</code>. Use skills for repeatable procedures, hooks for deterministic checks, and subagents or separate worktrees only for bounded independent work. Measure rework and time to first verified diff, not generated lines.</p>
+<p><strong>Greenfield:</strong> Implement one submit-to-fake-outbox path first, then add duplicate and invalid input handling.</p>
+<p><strong>Brownfield:</strong> Run baseline tests, trace the existing CSV formatting, then add bulk behavior in a short-lived worktree without changing the existing interface.</p>
+<details><summary>Try it: Spot a plan that is too big</summary><p>Expected: “Replace the entire export module and add async jobs” exceeds the approved change. Ask for the smallest additive path and a verifiable compatibility check.</p></details>
+<p><strong>Handoff:</strong> Test receives the diff, changed assumptions, and commands. <a href="practice.html#g-build">Greenfield lab</a> · <a href="practice.html#b-build">Brownfield lab</a></p>
+</article>
+<article class="stage" id="test">
+<span class="phase-tag teal">04 · Evidence</span><h2>Test: make feedback quick and independent</h2>
+<p><strong>Why separate it:</strong> The author can misunderstand the requirement and write tests that confirm the same misunderstanding. An independent check and a repeatable command protect against that.</p>
+<p><strong>Plays:</strong> Give Claude a short feedback command during implementation, then check the diff against the approved spec with fresh context. Keep two kinds of checks distinct: product tests verify behavior; continuous evals check whether an agent with changed prompts, rules, or models still handles representative tasks well. Track feedback time, false alarms, and escaped defects.</p>
+<p><strong>Greenfield:</strong> Check accepted requests, duplicate IDs, and blank messages; inspect the outbox rather than trusting a successful return alone.</p>
+<p><strong>Brownfield:</strong> Re-run legacy tests and independently inspect request order, missing IDs, the batch limit, and flag-off behavior.</p>
+<details><summary>Try it: Interpret a failing duplicate check</summary><p>Expected: If the accepted spec says one message per ID, fix the code, rerun checks, and leave the approval criterion intact. If the spec is wrong, take the question back to its owner.</p></details>
+<p><strong>Handoff:</strong> Deploy receives test evidence tied to the candidate revision and known risks. <a href="practice.html#g-test">Greenfield lab</a> · <a href="practice.html#b-test">Brownfield lab</a></p>
+</article>
+<article class="stage" id="deploy">
+<span class="phase-tag green">05 · Release</span><h2>Deploy: ship with a decision, not just a green check</h2>
+<p><strong>Why separate it:</strong> Tests describe the candidate. A release verifies what reached the target and whether it's safe to keep there.</p>
+<p><strong>Plays:</strong> Add agent-assisted PR review to flag missing evidence and decisions. Enforce required checks and human approvals through trusted hooks where applicable and GitHub rules at the repository boundary. Before agent-assisted CI/CD, restrict permissions, separate deployment from untrusted PR execution, and practice rollback. Measure review wait, failed releases, and rollback time.</p>
+<p><strong>Greenfield:</strong> Run a local smoke check from a clean checkout and keep the previous candidate revision available.</p>
+<p><strong>Brownfield:</strong> Ship with bulk export off; test legacy behavior, enable the flag in simulated staging, smoke test, then turn the flag back off to rehearse rollback.</p>
+<details><summary>Try it: What do you do when a smoke check fails?</summary><p>Expected: Stop rollout, use the approved rollback path, verify the restored behavior, and record the revision and evidence. Don't let a review bot grant its own release approval.</p></details>
+<p><strong>Handoff:</strong> Maintain reads the candidate revision, smoke evidence, and rollback notes. <a href="practice.html#g-deploy">Greenfield lab</a> · <a href="practice.html#b-deploy">Brownfield lab</a></p>
+</article>
+<article class="stage" id="maintain">
+<span class="phase-tag coral">06 · Feedback</span><h2>Maintain: turn observations into the next intent</h2>
+<p><strong>Why separate it:</strong> Production exposes cases fixtures didn't. A useful incident note preserves observations instead of jumping from a noisy alert to an unreviewed fix.</p>
+<p><strong>Play:</strong> Start from a trusted alert or support report, supply sanitized evidence, ask Claude to separate facts and hypotheses, and assign an owner. Review any mitigation and capture the follow-up as a new <code>intent.md</code>. Track detection-to-triage time and repeat incidents.</p>
+<p><strong>Greenfield:</strong> A simulated delivery failure shows a missing retry signal. Record evidence and plan retry visibility, not an automatic resend.</p>
+<p><strong>Brownfield:</strong> A simulated latency breach calls for flag rollback and a follow-up to profile the end-to-end export path.</p>
+<details><summary>Try it: Rewrite “make export faster” after an alert</summary><p>Expected: “Find why the synthetic bulk export exceeded 250 ms in two consecutive windows. Record the measured contributor and preserve existing CSV behavior.” Treat the threshold as a lab assumption, not a production recommendation.</p></details>
+<p><strong>Handoff:</strong> The approved follow-up re-enters Plan with links to release and incident evidence. <a href="practice.html#g-maintain">Greenfield lab</a> · <a href="practice.html#b-maintain">Brownfield lab</a></p>
+</article>
+<footer><a href="setup.html">← Setup</a> · <a href="practice.html">Next: Work through the case studies →</a></footer>
+</main></body></html>

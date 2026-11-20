@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greenfield and Brownfield simulators · Claude Code</title>
+<link rel="stylesheet" href="assets/aidlc-sim.css?v=211"><link rel="stylesheet" href="assets/platform-kit.css?v=1"><link rel="stylesheet" href="hub.css"><script defer src="hub.js"></script>
+</head>
+<body>
+<a class="course-skip" href="#main">Skip to labs</a>
+<header class="sim-header"><div class="icon" aria-hidden="true">🧪</div><div><h1>Greenfield and Brownfield simulators</h1><p>Practice the same six decisions with a new service and an existing contract.</p></div></header>
+<main class="course" id="main">
+<nav class="course-nav" aria-label="Course"><a href="./">Course home</a><a href="setup.html">Setup</a><a href="lifecycle.html">Lifecycle</a><a href="practice.html" aria-current="page">Simulators</a><a href="reference.html">Learning loop &amp; FAQ</a></nav>
+<article class="stage" id="start">
+<h2>Start in the browser or run the lab locally</h2>
+<p><strong>Browser:</strong> Choose <a href="#greenfield">Greenfield</a> or <a href="#brownfield">Brownfield</a>. At each step, make the decision yourself, then reveal a simulated result. The browser does not run commands or contact Claude.</p>
+<p><strong>Local:</strong> Install Git and Python 3.10+ and use <a href="setup.html">Claude Code setup</a> if you want to practice with the agent. You can perform the steps by hand without Claude.</p>
+<ol>
+<li>Clone <a href="https://github.com/Pandiarajan-Subramanian_xrx/claude-aidlc">the GitHub repository</a> (or download its ZIP). Copy the three files from your selected <code>labs/CASE/starter</code> folder into a new folder <strong>outside</strong> that checkout. Do not copy the repository's agent settings. Use a new folder for each lab.</li>
+<li>Open your terminal in that folder, initialize Git, and run the baseline. Use <code>python3</code> or <code>py -3</code> in place of <code>python</code> throughout if needed.
+<pre data-copy="lab initialization commands"><code>git init
+python -B -m unittest -v
+git add -- README.md *.py
+git commit -m "Save lab baseline"</code></pre>
+If Git asks for identity, configure it for the practice repo using your own name and preferred GitHub email. If a Python import fails, check that all three starter files sit beside each other and rerun from that folder.</li>
+<li>Use the <a href="labs/artifact-templates.md">artifact templates</a> when recording decisions. Paste each prompt into Claude, not the terminal. Review artifacts before allowing edits or handing them to the next stage.</li>
+</ol>
+</article>
+
+<section id="greenfield" aria-labelledby="green-title">
+<h2 id="green-title">Greenfield: notification outbox</h2>
+<p>A support operator wants to queue a synthetic notification once per request. You own the contract, but you don't need a queue, credentials, or an email provider. Starter: <a href="labs/greenfield/starter/README.md">README</a> · <a href="labs/greenfield/starter/outbox.py">fake outbox</a> · <a href="labs/greenfield/starter/test_outbox.py">baseline test</a>.</p>
+<nav class="walk-nav" aria-label="Greenfield steps"><a href="#g-plan">1 · Plan</a><a href="#g-design">2 · Design</a><a href="#g-build">3 · Build</a><a href="#g-test">4 · Test</a><a href="#g-deploy">5 · Deploy</a><a href="#g-maintain">6 · Maintain</a></nav>
+<article class="stage" id="g-plan">
+<span class="phase-tag">01 · Intent</span><h3>Choose the smallest useful outcome</h3>
+<ol><li>Read the brief above. Decide which operator action must work and what you won't build.</li><li>Ask Claude to draft <code>intent.md</code>. Correct the draft before moving on.</li></ol>
+<pre data-copy="Greenfield Plan prompt"><code>Interview me about a local duplicate-safe notification outbox. Draft intent.md
+with the user need, observable success, constraints, and questions. No code,
+network, real recipients, or persistent queue. Do not assume retry behavior.</code></pre>
+<details><summary>Reveal simulated result</summary><p><strong>Accepted intent:</strong> Given two valid submissions with the same request ID, the operator can verify only one outbox entry. Real delivery and restart recovery are out of scope.</p></details>
+<p><strong>Proceed when:</strong> You can explain who needs it and how to observe success. <a href="#g-design">Next: Design</a></p>
+</article>
+<article class="stage" id="g-design">
+<span class="phase-tag purple">02 · Spec</span><h3>Agree on a contract before writing code</h3>
+<ol><li>Read the fake outbox and compare in-memory deduplication with durable storage.</li><li>Choose an interface and document what happens for new, repeated, and blank input in <code>spec.md</code>.</li></ol>
+<pre data-copy="Greenfield Design prompt"><code>Read intent.md and outbox.py. Compare an in-memory set with a durable store.
+Propose acceptance cases for a new ID, a repeat with changed text, and blank ID
+or message. Name the restart limitation. Draft spec.md; do not implement.</code></pre>
+<details><summary>Reveal simulated result</summary><p><strong>Spec:</strong> <code>submit(request_id, message)</code> returns <code>queued</code> or <code>duplicate</code>; valid repeats retain the first message; whitespace-only inputs raise <code>ValueError</code>. The in-memory state resets on restart.</p></details>
+<p><strong>Proceed when:</strong> Each case has an observable result. <a href="#g-build">Next: Build</a></p>
+</article>
+<article class="stage" id="g-build">
+<span class="phase-tag amber">03 · Plan and diff</span><h3>Implement one submit-to-outbox slice</h3>
+<ol><li>Start Claude with <code>claude --permission-mode plan</code>. Request a minimal plan and review its proposed file list.</li><li>Save the agreed <code>plan.md</code>. Exit Plan Mode through the approval interface when ready, then ask for the approved slice. Inspect <code>git status --short</code> and the new files.</li></ol>
+<pre data-copy="Greenfield Build prompt"><code>Plan from spec.md. Add NotificationService in notifications.py and tests
+alongside the starter. Use only FakeOutbox and the standard library. Explain
+how to verify the smallest useful slice before you change anything.</code></pre>
+<details><summary>Reveal simulated result</summary><p>Claude proposes <code>notifications.py</code> and <code>test_notifications.py</code>; the original fake outbox stays unchanged. If it proposes a real queue or network, shorten the plan before approving.</p></details>
+<p><strong>Proceed when:</strong> You can trace the diff to the spec. <a href="#g-test">Next: Test</a></p>
+</article>
+<article class="stage" id="g-test">
+<span class="phase-tag teal">04 · Evidence</span><h3>Verify behavior, not just the return string</h3>
+<ol><li>Run the full suite. Check that the duplicate test asserts the outbox still contains the original entry.</li><li>In a fresh session or with the <a href="setup.html#features">review subagent</a>, compare the tests to the spec. Repair any real gap and rerun.</li></ol>
+<pre data-copy="Greenfield test command"><code>python -B -m unittest -v</code></pre>
+<pre data-copy="Greenfield Test prompt"><code>Review the tests against spec.md. Did we assert that a repeat leaves exactly
+one original outbox entry and that invalid input never writes? List gaps
+without editing tests or claiming a run you did not observe.</code></pre>
+<details><summary>Reveal simulated result and worked solution</summary><p>Baseline: <strong>1</strong> test. Worked solution: <strong>4</strong> tests, including the baseline. Overlay <a href="labs/greenfield/solution/notifications.py">notifications.py</a> and <a href="labs/greenfield/solution/test_notifications.py">test_notifications.py</a> on a fresh starter copy and rerun. If your suite differs, compare assertions rather than test count alone.</p></details>
+<p><strong>Proceed when:</strong> You have test output and can explain why it proves the requirement. <a href="#g-deploy">Next: Deploy</a></p>
+</article>
+<article class="stage" id="g-deploy">
+<span class="phase-tag green">05 · Release</span><h3>Rehearse publishing safely</h3>
+<ol><li>Review the change and commit it on your practice branch. Open a PR only if you have a separate practice remote; a local release record is fine.</li><li>Run this smoke test from a clean checkout of the candidate. Record the candidate revision, observed result, approver, and rollback plan.</li></ol>
+<pre data-copy="Greenfield smoke command"><code>python -B -m unittest -v test_notifications.NotificationTests.test_new_request_is_queued
+git rev-parse --short HEAD</code></pre>
+<details><summary>Reveal simulated result</summary><p>One smoke test passes. The reviewed revision and the tested revision match. If it fails, do not release; return to the last verified revision in staging and rerun its baseline check. This lab does not deploy anything.</p></details>
+<p><strong>Proceed when:</strong> A second developer can reproduce the decision from <code>release.md</code>. <a href="#g-maintain">Next: Maintain</a></p>
+</article>
+<article class="stage" id="g-maintain">
+<span class="phase-tag coral">06 · Feedback</span><h3>Use an alert to write the next intent</h3>
+<ol><li>Read the simulated event. Separate facts from theories before deciding on a follow-up.</li><li>Record the observed failure in <code>incident.md</code> and draft a new intent. Do not implement retries during triage.</li></ol>
+<pre><code>SIMULATED 09:14 notice-7 adapter_timeout
+SIMULATED 09:15 notice-7 status_unknown</code></pre>
+<pre data-copy="Greenfield Maintain prompt"><code>Use the two synthetic events to draft incident.md. Separate facts from
+unknowns, propose one measurable follow-up for delivery-state visibility,
+and explain why resending now could duplicate a notification.</code></pre>
+<details><summary>Reveal simulated result</summary><p>Delivery is unconfirmed, not proven lost. Follow-up intent: an operator can distinguish pending, confirmed, and unknown delivery in a synthetic timeout test. The next cycle starts with reviewing that intent.</p></details>
+<p><a href="#brownfield">Next simulator: Brownfield</a></p>
+</article>
+</section>
+
+<section id="brownfield" aria-labelledby="brown-title">
+<h2 id="brown-title">Brownfield: bulk invoice export</h2>
+<p>Finance wants one CSV for a small batch. An existing integration already calls the single-invoice function. Inspect its contract before changing anything. Starter: <a href="labs/brownfield/starter/README.md">README</a> · <a href="labs/brownfield/starter/invoice_export.py">existing exporter and fixtures</a> · <a href="labs/brownfield/starter/test_export.py">baseline tests</a>.</p>
+<nav class="walk-nav" aria-label="Brownfield steps"><a href="#b-plan">1 · Plan</a><a href="#b-design">2 · Design</a><a href="#b-build">3 · Build</a><a href="#b-test">4 · Test</a><a href="#b-deploy">5 · Deploy</a><a href="#b-maintain">6 · Maintain</a></nav>
+<article class="stage" id="b-plan">
+<span class="phase-tag">01 · Intent</span><h3>Preserve what existing users depend on</h3>
+<ol><li>Run <code>python -B -m unittest -v</code> and record the two baseline results.</li><li>Capture Finance's outcome and compatibility constraint in <code>intent.md</code>. Verify the filenames Claude cites.</li></ol>
+<pre data-copy="Brownfield Plan prompt"><code>Read README.md, invoice_export.py, and test_export.py without editing.
+Draft intent.md for Finance's batch CSV request. Identify the caller-facing
+behavior we cannot change and the questions we still need Finance to answer.</code></pre>
+<details><summary>Reveal simulated result</summary><p>The single export must retain its header, exact row shape, and <code>KeyError</code> for unknown IDs. Finance needs one ordered CSV for a small set of invoices; an unbounded export is out of scope.</p></details>
+<p><strong>Proceed when:</strong> The existing evidence and the new requirement are distinct. <a href="#b-design">Next: Design</a></p>
+</article>
+<article class="stage" id="b-design">
+<span class="phase-tag purple">02 · Spec</span><h3>Pick an additive change</h3>
+<ol><li>Compare overloading the public function with adding a separate, flagged entry point.</li><li>Specify one header, input order, a default-off flag, and behavior for invalid batches.</li></ol>
+<pre data-copy="Brownfield Design prompt"><code>Draft spec.md from intent.md. Compare two designs and favor preserving
+export_invoice. Define acceptance cases for 1 to 10 unique known IDs, bad
+batches, a disabled flag, and unchanged legacy output. Do not edit code.</code></pre>
+<details><summary>Reveal simulated result</summary><p>Choose new <code>export_bulk()</code> with a keyword flag. An invalid batch raises <code>ValueError</code> before rendering anything. The disabled path raises <code>PermissionError</code>; <code>export_invoice()</code> stays untouched.</p></details>
+<p><strong>Proceed when:</strong> You can explain how to turn the new behavior off. <a href="#b-build">Next: Build</a></p>
+</article>
+<article class="stage" id="b-build">
+<span class="phase-tag amber">03 · Plan and diff</span><h3>Work in a separate checkout</h3>
+<ol><li>Commit the approved intent and spec in your practice repo. Make a separate checkout with <code>git worktree add -b lab-bulk ../invoice-bulk HEAD</code> and open that checkout.</li><li>Start Claude in Plan Mode, review the plan, and approve only the additive change. Review the diff, including the new files.</li></ol>
+<pre data-copy="Brownfield Build prompt"><code>Plan the smallest bulk export change using the existing CSV renderer. Create
+bulk_export.py and focused tests after I approve. Do not modify the legacy
+exporter or its tests. Include a verification command and rollback check.</code></pre>
+<details><summary>Reveal simulated result</summary><p>Claude proposes two new files and no legacy changes. If the worktree lacks the spec, confirm it was committed in the source checkout before creating the worktree.</p></details>
+<p><strong>Proceed when:</strong> The legacy files match the baseline and the new entries are reviewable. <a href="#b-test">Next: Test</a></p>
+</article>
+<article class="stage" id="b-test">
+<span class="phase-tag teal">04 · Evidence</span><h3>Check compatibility and boundary cases</h3>
+<ol><li>Run <code>python -B -m unittest -v</code>. If a legacy test fails, inspect the change rather than adjusting the expected CSV.</li><li>Check that an invalid batch never calls the renderer and flag-off leaves the legacy path available.</li></ol>
+<pre data-copy="Brownfield Test prompt"><code>Read spec.md and compare it with the tests in a fresh context. Check one
+header, reverse input order, exact batch limit, each invalid case, and the
+legacy path with the flag off. Separate observed results from inferred ones.</code></pre>
+<details><summary>Reveal simulated result and worked solution</summary><p>Baseline: <strong>2</strong> tests. Worked solution: <strong>6</strong>, including the unchanged baseline. Overlay <a href="labs/brownfield/solution/bulk_export.py">bulk_export.py</a> and <a href="labs/brownfield/solution/test_bulk_export.py">test_bulk_export.py</a> on a fresh starter copy and rerun.</p></details>
+<p><strong>Proceed when:</strong> The old and new contracts both have passing evidence. <a href="#b-deploy">Next: Deploy</a></p>
+</article>
+<article class="stage" id="b-deploy">
+<span class="phase-tag green">05 · Release</span><h3>Rehearse a flag rollback</h3>
+<ol><li>Review and commit the candidate. Use a clean checkout of that revision as simulated staging.</li><li>Run the smoke tests below. They check a successful enabled export, then the disabled path and continued single-invoice behavior. Save the output in the release record.</li></ol>
+<pre data-copy="Brownfield smoke command"><code>python -B -m unittest -v test_bulk_export.BulkExportTests.test_bulk_writes_one_header_and_keeps_request_order test_bulk_export.BulkExportTests.test_rollout_can_be_disabled_without_changing_legacy_export
+git rev-parse --short HEAD</code></pre>
+<details><summary>Reveal simulated result</summary><p>Two smoke tests pass. If either fails, hold release and keep the feature off. A real feature flag needs its own permissions and audit trail; this local lab uses a function argument.</p></details>
+<p><strong>Proceed when:</strong> You know how to verify recovery, not just how to disable a flag. <a href="#b-maintain">Next: Maintain</a></p>
+</article>
+<article class="stage" id="b-maintain">
+<span class="phase-tag coral">06 · Feedback</span><h3>Turn a slow export into a scoped investigation</h3>
+<ol><li>Assume a practice threshold of 250 ms in two consecutive windows. Record the breach but do not infer a root cause from two samples.</li><li>Rehearse flag-off again using the smoke test. Draft a follow-up intent to measure where time is spent.</li></ol>
+<pre><code>SIMULATED 10:00 window_ms=312 threshold_ms=250
+SIMULATED 10:05 window_ms=298 threshold_ms=250</code></pre>
+<pre data-copy="Brownfield Maintain prompt"><code>Using these synthetic windows, draft incident.md with observations, unknowns,
+flag-off verification, and a new intent for profiling. Do not claim the CSV
+renderer caused the breach or make a code change during triage.</code></pre>
+<details><summary>Reveal simulated result</summary><p>Both windows breach the exercise threshold. Single export still passes after simulated rollback. Follow-up: measure data lookup and rendering separately under a fixed fixture and preserve the CSV contract.</p></details>
+<p><a href="reference.html#learning-loop">Next: Capture the learning</a></p>
+</article>
+</section>
+<footer><a href="lifecycle.html">← Lifecycle</a> · <a href="reference.html">Next: Learning loop &amp; FAQ →</a></footer>
+</main></body></html>

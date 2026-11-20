@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning loop and FAQ · Claude Code AI-Native SDLC</title>
+<link rel="stylesheet" href="assets/aidlc-sim.css?v=211"><link rel="stylesheet" href="assets/platform-kit.css?v=1"><link rel="stylesheet" href="hub.css"><script defer src="hub.js"></script>
+</head>
+<body>
+<a class="course-skip" href="#main">Skip to reference</a>
+<header class="sim-header"><div class="icon" aria-hidden="true">🧠</div><div><h1>Learning loop &amp; FAQ</h1><p>Keep the lessons that make the next change easier to verify.</p></div></header>
+<main class="course" id="main">
+<nav class="course-nav" aria-label="Course"><a href="./">Course home</a><a href="setup.html">Setup</a><a href="lifecycle.html">Lifecycle</a><a href="practice.html">Simulators</a><a href="reference.html" aria-current="page">Learning loop &amp; FAQ</a></nav>
+<article class="stage" id="learning-loop">
+<h2>Knowledge and learning loop</h2>
+<p>Don't copy a transcript into project memory. Keep the decision and put the reusable lesson where it can change future behavior.</p>
+<ol>
+<li><strong>Observe:</strong> The Brownfield agent kept rewriting the CSV header. Link the failing test and the accepted compatibility criterion.</li>
+<li><strong>Diagnose:</strong> A new session could not tell the public CSV contract from an internal detail. Check whether the information was missing, ignored, or simply not tested.</li>
+<li><strong>Choose a durable change:</strong> Keep exact behavior in a regression test. Add a short pointer in <code>CLAUDE.md</code> if it often matters; use a skill for a repeatable review procedure or a policy check for a mechanical requirement. Use an owned runbook for infrequent operational context.</li>
+<li><strong>Review:</strong> Check the rule is scoped, version it with an owner, and exclude secrets, private logs, and incidental commands.</li>
+<li><strong>Re-run:</strong> Repeat a representative change in fresh context. Did the agent preserve the header without a reminder? Does the test catch a deliberately changed expectation in a disposable copy? Remove stale guidance when it stops helping.</li>
+</ol>
+<pre data-copy="CLAUDE.md rule example"><code>For invoice-export changes, preserve the public single-invoice CSV contract.
+Run python -B -m unittest -v before requesting review. See test_export.py
+for compatibility examples. Document any proposed contract change in spec.md.</code></pre>
+<p><strong>Keep the loops distinct:</strong> A production issue feeds a new product intent. A repeated mistake in the way the team or agent works improves a test, instruction, or control. One incident can teach both.</p>
+</article>
+<article class="stage" id="pilot">
+<h2>Closing thoughts: start with one play</h2>
+<p>Pick a change small enough to understand end to end. If review is the bottleneck, try a PR evidence checklist with a human reviewer. If bad assumptions are the bottleneck, try approved intent and spec before Build. Keep the existing approval path in both cases.</p>
+<p>Compare a few similar changes before and after the pilot. Record queue time, rework, and escaped defects; don't infer a trend from a single change or use lines generated as a proxy for value. Keep the play if it makes the flow easier to verify without increasing risk. Then add the next play that solves a measured problem.</p>
+<p><strong>The goal is not to produce code faster at every step.</strong> It's to shorten the time from useful intent to a result you can explain, verify, release, and improve.</p>
+</article>
+<article class="stage" id="glossary">
+<h2>Glossary and Git primer</h2>
+<dl>
+<dt><strong>Artifact</strong></dt><dd>A reviewable record, such as a spec, diff, test result, or incident note.</dd>
+<dt><strong>Acceptance criterion</strong></dt><dd>An observable condition that must hold before you accept the change.</dd>
+<dt><strong>Branch, commit, and PR</strong></dt><dd>A branch tracks a line of work, a commit records a snapshot, and a pull request asks others to review changes before merging them.</dd>
+<dt><strong>Greenfield / brownfield</strong></dt><dd>Building something new / changing something that already has users, constraints, or contracts.</dd>
+<dt><strong>Smoke test and rollback</strong></dt><dd>A short check of a release's key behavior, and a known path back to a safe state if that check fails.</dd>
+<dt><strong>Eval</strong></dt><dd>A repeatable check of an agent's behavior on representative tasks, distinct from tests of the shipped application.</dd>
+</dl>
+<p>Use <code>git status --short</code> to see what changed, <code>git diff</code> to inspect tracked edits, and <code>git diff --cached</code> to inspect staged changes. Open newly created files directly or stage them before checking the staged diff.</p>
+</article>
+<article class="stage" id="faq">
+<h2>FAQ</h2>
+<details><summary>Do I need a Claude or Copilot subscription?</summary><p>Neither is required for the browser exercises or hand-run Python labs. Agent-backed practice requires supported Claude Code access. GitHub Copilot is a separate product and is not required.</p></details>
+<details><summary>Is this the same as the AI-DLC framework on the parent site?</summary><p>No. This course teaches Anthropic's six-stage playbook with Claude Code, Git, and simple artifacts. The parent site also teaches a separate framework with its own phases and tooling.</p></details>
+<details><summary>Do we need all six documents every time?</summary><p>No. Keep the relevant decisions and evidence proportional to risk. A small bugfix may capture intent, verification, and rollback in the same PR.</p></details>
+<details><summary>Where should a team keep intent if it already uses a ticket tracker?</summary><p>Choose one source of truth. If Git stores the accepted spec, link it from the ticket; if the tracker owns intent, link it from the spec and avoid two editable copies.</p></details>
+<details><summary>What if Claude requests credentials, network access, or a broad permission?</summary><p>Decline anything the task does not require. Synthetic labs do not need credentials beyond signing in to Claude itself. Use a scoped tool or reproduce the action manually if your organization approves it.</p></details>
+<details><summary>What if the agent changes a test to make it pass?</summary><p>Check whether the old assertion expressed the approved behavior. If so, preserve it and fix the implementation. If not, get agreement on the correction before changing it.</p></details>
+<details><summary>Can I use a real company repo for the lab?</summary><p>Practice on the synthetic starter first. Apply the workflow to a company repo only after checking tool approval, data policies, repository trust, and release rules.</p></details>
+</article>
+<footer><a href="practice.html">← Simulators</a> · <a href="./#training">Return to the checklist and knowledge check →</a></footer>
+</main></body></html>

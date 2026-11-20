@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Learn Anthropic's six-stage AI-native software lifecycle through Claude Code walkthroughs and runnable projects.">
+<title>Claude Code AI-Native SDLC Learning Hub</title>
+<link rel="stylesheet" href="assets/aidlc-sim.css?v=211">
+<link rel="stylesheet" href="assets/platform-kit.css?v=1">
+<link rel="stylesheet" href="hub.css">
+<script defer src="hub.js"></script>
+</head>
+<body>
+<a class="course-skip" href="#main">Skip to learning paths</a>
+<header class="sim-header">
+  <div class="icon" aria-hidden="true">✳️</div>
+  <div><h1>Claude Code AI-Native SDLC Learning Hub</h1>
+    <p>From an idea to a release you can verify, and from production feedback to the next improvement.</p>
+    <div class="stack-pills"><span class="pill">Claude Code</span><span class="pill">Six stages</span><span class="pill">Two practice projects</span></div>
+  </div>
+</header>
+<main class="course" id="main">
+  <nav class="course-nav" aria-label="Course"><a href="./" aria-current="page">Course home</a><a href="setup.html">Setup</a><a href="lifecycle.html">Lifecycle</a><a href="practice.html">Simulators</a><a href="reference.html">Learning loop &amp; FAQ</a></nav>
+  <section aria-labelledby="paths">
+    <h2 id="paths">Choose a learning path</h2>
+    <div class="grid">
+      <a class="tile" href="setup.html#first-session"><span class="eyebrow">New developer</span><h3>Start with your first session</h3><p>Learn what Claude can do, then try the Greenfield simulator before making local changes.</p></a>
+      <a class="tile" href="lifecycle.html#plays"><span class="eyebrow">Working developer</span><h3>Find a play for your bottleneck</h3><p>Start with the practice that addresses your team's biggest queue, then try it in the Brownfield lab.</p></a>
+    </div>
+    <p class="muted">The browser lessons run without an account. For local labs, use Git and Python 3.10+; Claude Code access is needed only if you want to practice with the agent.</p>
+  </section>
+  <section aria-labelledby="modules">
+    <h2 class="eyebrow" id="modules">Lessons and interactive simulators</h2>
+    <div class="grid">
+      <a class="tile" href="setup.html"><span class="eyebrow">01 · Setup</span><h3>Meet Claude Code</h3><p>Install on your OS, choose an interface, and safely run your first prompt.</p></a>
+      <a class="tile" href="setup.html#features"><span class="eyebrow">02 · Feature tour</span><h3>Shape what Claude does</h3><p>Use tools, skills, subagents, hooks, and MCP. Know which problem each solves.</p></a>
+      <a class="tile" href="setup.html#safety"><span class="eyebrow">03 · Security</span><h3>Set boundaries</h3><p>Separate permissions, shell sandboxing, and Git worktrees.</p></a>
+      <a class="tile" href="lifecycle.html"><span class="eyebrow">04 · Playbook</span><h3>Connect the six stages</h3><p>Replace repeated handoff meetings with reviewed artifacts and clear decisions.</p></a>
+      <a class="tile" href="practice.html#greenfield"><span class="eyebrow">05 · Simulator</span><h3>Greenfield notification service</h3><p>Turn a blank project into a verified local delivery flow.</p></a>
+      <a class="tile" href="practice.html#brownfield"><span class="eyebrow">06 · Simulator</span><h3>Brownfield invoice export</h3><p>Change an existing service without breaking its callers.</p></a>
+      <a class="tile" href="reference.html"><span class="eyebrow">07 · Reference</span><h3>Learn, measure, repeat</h3><p>Capture lessons, review troubleshooting, and choose a first team pilot.</p></a>
+    </div>
+  </section>
+  <section aria-labelledby="training">
+    <h2 id="training">Your training checklist</h2>
+    <p class="muted">Progress stays in this browser when storage is available. The course does not collect it.</p>
+    <label><input type="checkbox" data-completion="setup"> I can start Claude Code and explain its permissions.</label>
+    <label><input type="checkbox" data-completion="stages"> I can trace one requirement from intent to release evidence.</label>
+    <label><input type="checkbox" data-completion="greenfield"> I completed the Greenfield walkthrough or local lab.</label>
+    <label><input type="checkbox" data-completion="brownfield"> I completed the Brownfield walkthrough or local lab.</label>
+    <p id="course-progress" role="status"></p>
+    <h3>Knowledge check</h3>
+    <details><summary>Build time fell, but delivery did not. What should the team measure next?</summary><p>Measure time spent waiting for clarification, review, tests, and deployment. Pilot a play for the largest queue and monitor escaped defects alongside lead time.</p></details>
+    <details><summary>Three Claude sessions edit different files. Does a Git worktree protect your credentials?</summary><p>No. A worktree separates checkouts; process permissions and sandboxing determine what files, credentials, and network resources a process can reach.</p></details>
+    <details><summary>A new acceptance test fails after Build. Should Claude edit the test until it passes?</summary><p>Not by default. Compare the test to the agreed criterion. Fix the implementation if the criterion is right; return to Design for human review if the criterion itself was wrong.</p></details>
+  </section>
+  <footer><p>Curriculum source: <a href="https://claude.com/resources/articles/the-ai-native-sdlc-playbook">Anthropic's AI-native SDLC playbook</a>. The labs and examples are original practice exercises. This course does not require the separate AI-DLC framework.</p></footer>
+</main>
+</body>
+</html>

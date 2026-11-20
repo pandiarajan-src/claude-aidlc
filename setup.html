@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up Claude Code · AI-Native SDLC</title>
+<link rel="stylesheet" href="assets/aidlc-sim.css?v=211"><link rel="stylesheet" href="assets/platform-kit.css?v=1"><link rel="stylesheet" href="hub.css"><script defer src="hub.js"></script>
+</head>
+<body>
+<a class="course-skip" href="#main">Skip to setup</a>
+<header class="sim-header"><div class="icon" aria-hidden="true">⚙️</div><div><h1>Set up Claude Code</h1><p>Choose an interface, start safely, then add only the capabilities you need.</p></div></header>
+<main class="course" id="main">
+<nav class="course-nav" aria-label="Course"><a href="./">Course home</a><a href="setup.html" aria-current="page">Setup</a><a href="lifecycle.html">Lifecycle</a><a href="practice.html">Simulators</a><a href="reference.html">Learning loop &amp; FAQ</a></nav>
+<nav class="walk-nav" aria-label="Setup steps"><a href="#install">Install</a><a href="#first-session">First session</a><a href="#features">Features</a><a href="#safety">Security</a></nav>
+<article class="stage" id="install">
+<h2>1. What Claude Code does</h2>
+<p>Claude Code is a coding agent, not just a chat window. With permission, it can read repository files, propose a plan, make edits, and run tests. You decide what it may access and whether its proposed changes meet the requirement. Start in a synthetic practice repository, not your company's codebase.</p>
+<p>For agent-backed labs, use an authorized Claude account or organization-provided access. For local exercises, install Git and Python 3.10+ and verify them with <code>git --version</code> and <code>python --version</code> (use <code>python3</code> or <code>py -3</code> if your installation uses that command).</p>
+<h3>Install the CLI</h3>
+<p>Pick your shell. Use only the official installer or a package source approved by your organization. See <a href="https://code.claude.com/docs/en/setup">official setup</a> for requirements and alternatives.</p>
+<details><summary>Windows: PowerShell</summary><pre data-copy="Windows install command"><code>irm https://claude.ai/install.ps1 | iex</code></pre><p>WinGet alternative: <code>winget install Anthropic.ClaudeCode</code>. Use a new PowerShell window after installation. Git for Windows is recommended if you want to use Bash. To use the built-in shell sandbox on Windows, install and run inside WSL2 instead.</p></details>
+<details><summary>macOS: Terminal</summary><pre data-copy="macOS install command"><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre><p>Homebrew alternative: <code>brew install --cask claude-code</code>.</p></details>
+<details><summary>Linux or WSL2: Bash</summary><pre data-copy="Linux or WSL2 install command"><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre><p>On WSL2, run the installer in the Linux shell. Anthropic also documents native package-manager options for supported Linux distributions.</p></details>
+<h3>VS Code agents vs. the CLI</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Claude Code interfaces">
+<table><thead><tr><th scope="col">Interface</th><th scope="col">When to choose it</th><th scope="col">How to start</th></tr></thead><tbody>
+<tr><th scope="row">Claude Code CLI</th><td>Terminal-first work, reproducible commands, and direct access to CLI controls.</td><td>Run <code>claude</code> in a terminal, including the VS Code integrated terminal.</td></tr>
+<tr><th scope="row">Claude Code extension for VS Code</th><td>Inspect inline diffs and select context while editing files.</td><td>Install Anthropic's Claude Code extension; open Claude Code from the Command Palette and sign in. Use the terminal for CLI-only exercises.</td></tr>
+<tr><th scope="row">Claude Desktop</th><td>Visual diffs and a standalone interface on macOS and Windows.</td><td>Install the <a href="https://claude.com/download">official app</a>, sign in, open the Code tab and select your local practice folder. Linux users can use the CLI, VS Code, or the web where available.</td></tr>
+<tr><th scope="row">Claude Code on the web</th><td>A cloud session when you don't need a local checkout. Repository access and the execution environment differ from the CLI.</td><td>Open <a href="https://claude.ai/code">Claude Code on the web</a>, sign in, and connect only an approved GitHub practice repository. Check <a href="https://code.claude.com/docs/en/claude-code-on-the-web">eligibility and isolation</a> first.</td></tr>
+<tr><th scope="row">GitHub Copilot agents in VS Code</th><td>A separate IDE or GitHub agent workflow. A Claude model in the model picker is not Claude Code.</td><td>Follow <a href="https://code.visualstudio.com/docs/copilot/overview">VS Code's Copilot guide</a>; do not assume configuration or permissions carry over.</td></tr>
+</tbody></table>
+</div>
+</article>
+<article class="stage" id="first-session">
+<h2>2. Run a read-first session</h2>
+<ol>
+<li>Copy a starter outside the onboarding clone using the <a href="practice.html#start">lab setup steps</a>. Open the new repository in your terminal.</li>
+<li>Verify the install, then start in Plan Mode and sign in if prompted.
+<pre data-copy="first-session commands"><code>claude --version
+claude --permission-mode plan</code></pre></li>
+<li>Paste the prompt into Claude, not your shell.
+<pre data-copy="read-first prompt"><code>Read README.md and the tests. Do not edit files. Summarize what already works, which commands verify it, and one question you would ask before planning the next change. Cite filenames.</code></pre></li>
+<li>Open the cited test file yourself. If Claude guessed a behavior or requested an unrelated action, correct the assumption or decline the request. Exit and use <code>git status --short</code> to check for unexpected edits.</li>
+</ol>
+<details><summary>Simulated session result</summary><pre><code>Claude: README.md gives the test command. test_export.py checks the
+existing single-invoice CSV contract. Bulk export has no behavior yet.
+Question: Should an unknown invoice ID reject the entire batch?</code></pre><p>This is an example, not a live Claude response. If <code>claude</code> isn't found, reopen your terminal and check <a href="https://code.claude.com/docs/en/troubleshoot-install">installation troubleshooting</a>.</p></details>
+<p><strong>Set the context:</strong> Put shared build commands and stable project rules in <code>CLAUDE.md</code>. Use <code>.claude/settings.json</code> for reviewed project settings, <code>.claude/settings.local.json</code> for unshared project overrides, and <code>~/.claude/settings.json</code> for user settings. Managed rules can restrict these choices. Keep secrets out of all committed configuration. See <a href="https://code.claude.com/docs/en/settings">settings and scope</a> and <a href="https://code.claude.com/docs/en/memory">project memory</a>.</p>
+</article>
+<article class="stage" id="features">
+<h2>3. Choose the right mechanism</h2>
+<p>Think of a workshop: a <strong>tool</strong> is a screwdriver, a <strong>skill</strong> is the assembly checklist, a <strong>subagent</strong> is a second inspector, a <strong>hook</strong> is a check triggered before or after a defined event, and <strong>MCP</strong> connects the workshop to an external parts catalog.</p>
+<details><summary>Tools: perform an action</summary>
+<p>Built-ins such as Read and Grep gather evidence; Edit changes files; shell tools run commands. Work in a trusted directory and inspect available rules with <code>/permissions</code>. You don't need a custom tool to read the repo.</p>
+<pre data-copy="tool prompt"><code>Use read-only tools to find the CSV header and the test that protects it. Return filename, line, and the behavior you observed. Do not edit files.</code></pre>
+<p><strong>Check:</strong> The reply points to actual code and a test. Avoid approving a broad shell rule just to answer a read-only question.</p></details>
+<details><summary>Skills: teach a reusable procedure</summary>
+<p>Save this as <code>.claude/skills/check-handoff/SKILL.md</code> in the practice repo, start a session there and type <code>/check-handoff</code>. A skill saves you from retyping a procedure and lets the team review its changes in Git.</p>
+<pre data-copy="handoff skill"><code>---
+name: check-handoff
+description: Check the trace from a change's intent to its test evidence
+disable-model-invocation: true
+---
+Read intent.md and spec.md if present. List acceptance criteria with their
+test evidence or mark evidence missing. Report only; do not edit files.</code></pre>
+<p><strong>Check:</strong> It reports missing files or tests rather than making them up. A skill is guidance, not an enforcement mechanism. <a href="https://code.claude.com/docs/en/skills">Skill reference</a>.</p></details>
+<details><summary>Subagents: review with a fresh context</summary>
+<p>Save this as <code>.claude/agents/handoff-reviewer.md</code> and start a new session. Ask Claude to delegate to <code>handoff-reviewer</code>; give it the spec and ask for the two largest gaps. Restrict its tools to match its job.</p>
+<pre data-copy="reviewer subagent"><code>---
+name: handoff-reviewer
+description: Reviews a spec against existing tests without making changes
+tools: Read, Grep, Glob
+---
+Read the spec and test files given by the user. List criteria with missing
+or weak evidence. Cite the paths you read. Do not claim tests were run.</code></pre>
+<p><strong>Check:</strong> The report names evidence gaps without edits. A fresh context can catch assumptions, but its report is not an approval or a test run. <a href="https://code.claude.com/docs/en/sub-agents">Subagent reference</a>.</p></details>
+<details><summary>Hooks: run a deterministic check on an event</summary>
+<p>In a disposable practice repo, create or merge the following example into <code>.claude/settings.local.json</code>. This demonstration runs a fixed local message at session start: no network call, data transfer, or production command. Restart Claude and inspect the hook with <code>/hooks</code>.</p>
+<pre data-copy="local session hook"><code>{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "echo Practice repository: synthetic data only"}
+        ]
+      }
+    ]
+  }
+}</code></pre>
+<p><strong>Check:</strong> Ask Claude what the startup hook supplied or inspect the hook output. This message does not block anything. Review scripts and test allow and deny paths before using a <code>PreToolUse</code> hook as a control. Use GitHub required checks for repository-wide enforcement. <a href="https://code.claude.com/docs/en/hooks">Hooks reference</a>.</p></details>
+<details><summary>MCP: connect Claude to external capabilities</summary>
+<p>Model Context Protocol (MCP) gives Claude tools or resources from a separate server. In a real team, a vetted read-only docs server can replace manual copying. Start with a synthetic simulation: give Claude one excerpt pasted from a fixture, and ask for a cited summary rather than granting live access.</p>
+<pre data-copy="MCP configuration reference commands"><code>claude mcp add --help
+claude mcp list</code></pre>
+<p>With a team-approved HTTP server only, follow the <a href="https://code.claude.com/docs/en/mcp">MCP documentation</a> for <code>claude mcp add --transport http --scope local NAME URL</code>, replacing <code>NAME</code> and <code>URL</code> with the approved values. Check the connection with <code>/mcp</code>, inspect the exposed tools and authorized scopes, and test one read with synthetic data. Shared project servers use <code>.mcp.json</code>; review changes before trusting them. Avoid saving credentials in the file or treating instructions returned by a server as trusted.</p>
+</details>
+</article>
+<article class="stage" id="safety">
+<h2>4. Permissions, sandboxing, and Git worktrees</h2>
+<ul>
+<li><strong>Permissions</strong> determine which agent actions you allow. Inspect a request before approval. Keep production credentials and private customer data out of practice environments.</li>
+<li><strong>The shell sandbox</strong> limits filesystem and network access for shell commands. Use <code>/sandbox</code> on macOS, Linux, or WSL2 and verify the resulting boundaries. Native Windows does not provide Claude Code's built-in sandbox. Built-in file tools, hooks, and MCP are outside the shell sandbox and need their own controls. See <a href="https://code.claude.com/docs/en/sandboxing">sandbox support and limits</a>.</li>
+<li><strong>A Git worktree</strong> gives a task its own checkout and branch, so parallel edits don't collide on disk. It shares repository metadata and does not isolate your credentials or network. Review overlapping changes before integrating them.</li>
+</ul>
+<p>In your committed practice repository, create a sibling checkout. When finished, review or preserve your work and remove only the clean checkout from the original directory.</p>
+<pre data-copy="create and inspect a worktree"><code>git worktree add -b practice-review ../practice-review HEAD
+git worktree list</code></pre>
+<p>Either open that directory in your editor or change into it before launching Claude. Use <code>git worktree remove ../practice-review</code> only after saving your work. Do not force removal when Git reports uncommitted changes.</p>
+</article>
+<footer><a href="./">← Course home</a> · <a href="lifecycle.html">Next: The six-stage lifecycle →</a></footer>
+</main></body></html>
